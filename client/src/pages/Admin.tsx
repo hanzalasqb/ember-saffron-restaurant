@@ -1,6 +1,6 @@
 import { BarChart3, CalendarDays, ChefHat, DollarSign, Lightbulb, Receipt, Users } from "lucide-react";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { Bar, BarChart, CartesianGrid, Cell, LabelList, ReferenceLine, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis } from "recharts";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList, ReferenceLine, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, ZAxis, type LabelProps } from "recharts";
 import { TABLES } from "../../../shared/menu";
 import Nav from "../components/Nav";
 import { Spinner } from "../components/ui";
@@ -83,12 +83,52 @@ function Reservations() {
   );
 }
 
+// Short chart labels; full names stay in the tooltip and the best-seller list.
+const SHORT: Record<string, string> = {
+  "burrata-caprese": "Burrata", "crispy-calamari": "Calamari", "lamb-samosas": "Samosas", "wild-mushroom-soup": "Velouté",
+  "saffron-chicken-biryani": "Biryani", "wood-fired-margherita": "Margherita", "ember-ribeye": "Ribeye", "charred-salmon": "Miso Salmon",
+  "truffle-risotto": "Risotto", "smash-burger": "Smash Burger", "chicken-tikka-masala": "Tikka Masala", "falafel-mezze": "Falafel",
+  "molten-chocolate-cake": "Lava Cake", "classic-tiramisu": "Tiramisu", "strawberry-panna-cotta": "Panna Cotta",
+  "mint-lime-cooler": "Lime Cooler", "citrus-spritz": "Spritz", "iced-spanish-latte": "Spanish Latte",
+};
+type Box = { x: number; y: number; w: number; h: number };
+const overlaps = (a: Box, b: Box) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+/** Scatter labels with simple collision avoidance: try above, below, right, left; skip if all overlap. */
+function useLabelPlacer(names: string[]) {
+  return useMemo(() => {
+    let placed: Box[] = [];
+    return function PlacedLabel(props: LabelProps) {
+      const viewBox = props.viewBox as { x?: number; y?: number; width?: number; height?: number } | undefined;
+      const index = props.index ?? 0;
+      if (index === 0) placed = []; // labels render in order, so index 0 starts a fresh layout pass
+      if (!viewBox || !names[index]) return null;
+      const r = (viewBox.width ?? 10) / 2, cx = (viewBox.x ?? 0) + r, cy = (viewBox.y ?? 0) + r;
+      placed.push({ x: cx - r, y: cy - r, w: 2 * r, h: 2 * r });
+      const text = names[index], w = text.length * 5.4 + 4, h = 12;
+      const spots: Box[] = [
+        { x: cx - w / 2, y: cy - r - 2 - h, w, h },
+        { x: cx - w / 2, y: cy + r + 2, w, h },
+        { x: cx + r + 3, y: cy - h / 2, w, h },
+        { x: cx - r - 3 - w, y: cy - h / 2, w, h },
+      ];
+      const spot = spots.find((b) => !placed.some((p) => overlaps(b, p)));
+      if (!spot) return null;
+      placed.push(spot);
+      return <text x={spot.x + w / 2} y={spot.y + h - 2.5} textAnchor="middle" fill="#d6d3d1" fontSize={10}>{text}</text>;
+    };
+  }, [names]);
+}
+
 function Insights() {
   const [data, setData] = useState<Analytics | null>(null);
   useEffect(() => { api.analytics().then(setData); }, []);
+  // best sellers first, so they win label space when points crowd together
+  const points = useMemo(() => (data?.matrix.items ?? []).map((i) => ({ ...i, pop: Math.round(i.popularity * 1000) / 10 })).sort((a, b) => b.sold - a.sold), [data]);
+  const names = useMemo(() => points.map((p) => SHORT[p.slug] ?? p.name), [points]);
+  const PlacedLabel = useLabelPlacer(names);
   if (!data) return <Spinner className="h-6 w-6" />;
   const k = data.kpis;
-  const points = data.matrix.items.map((i) => ({ ...i, pop: Math.round(i.popularity * 1000) / 10 }));
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -105,14 +145,14 @@ function Insights() {
             <ScatterChart margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
               <CartesianGrid stroke="#2a241f" />
               <XAxis type="number" dataKey="pop" name="Popularity" unit="%" tick={{ fill: "#a8a29e", fontSize: 11 }} />
-              <YAxis type="number" dataKey="margin" name="Margin" unit="$" tick={{ fill: "#a8a29e", fontSize: 11 }} width={45} />
+              <YAxis type="number" dataKey="margin" name="Margin" tickFormatter={(v: number) => `$${v}`} tick={{ fill: "#a8a29e", fontSize: 11 }} width={45} />
               <ZAxis range={[90, 90]} />
               <ReferenceLine x={Math.round(data.matrix.popularityThreshold * 1000) / 10} stroke="#57534e" strokeDasharray="4 4" />
               <ReferenceLine y={Math.round(data.matrix.averageMargin * 100) / 100} stroke="#57534e" strokeDasharray="4 4" />
-              <Tooltip contentStyle={{ background: "#1a1613", border: "1px solid #2a241f", borderRadius: 12, fontSize: 12 }} formatter={(v, n) => [v, n]} labelFormatter={() => ""} />
+              <Tooltip cursor={{ strokeDasharray: "3 3" }} content={({ payload }) => { const p = payload?.[0]?.payload as (typeof points)[number] | undefined; return p ? <div className="rounded-xl border border-white/10 bg-coal px-3 py-2 text-xs"><div className="font-semibold text-cream">{p.name}</div><div className="text-cream/60">{p.sold} sold · {p.pop}% of dishes · {money(p.margin)} margin</div><div style={{ color: QUAD_COLOR[p.quadrant] }}>{p.quadrant}</div></div> : null; }} />
               <Scatter data={points}>
                 {points.map((p) => <Cell key={p.slug} fill={QUAD_COLOR[p.quadrant]} />)}
-                <LabelList dataKey="name" position="top" style={{ fill: "#d6d3d1", fontSize: 9 }} />
+                <LabelList dataKey="name" content={PlacedLabel} />
               </Scatter>
             </ScatterChart>
           </ResponsiveContainer></div>

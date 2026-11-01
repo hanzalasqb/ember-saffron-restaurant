@@ -30,8 +30,8 @@ export function insightsFromMatrix(matrix: ReturnType<typeof menuEngineering>): 
   const [stars, plow, puzzles, dogs] = ["Star", "Plowhorse", "Puzzle", "Dog"].map(by);
   return [
     stars.length && `⭐ ${stars.map((s) => s.name).slice(0, 3).join(", ")} ${stars.length > 1 ? "are your stars" : "is your star"}: popular and profitable. Keep them prominent.`,
-    plow.length && `🐴 ${plow[0].name} sells well but earns $${plow[0].margin} per plate. A $1–2 price increase or a cheaper garnish would add about $${Math.round(plow[0].sold * 1.5)} over the period.`,
-    puzzles.length && `🧩 ${puzzles[0].name} has a strong margin ($${puzzles[0].margin}) but few orders. Move it to the top of its section and have servers recommend it.`,
+    plow.length && `🐴 ${plow[0].name} sells well but earns $${plow[0].margin.toFixed(2)} per plate. A $1–2 price increase or a cheaper garnish would add about $${Math.round(plow[0].sold * 1.5)} over the period.`,
+    puzzles.length && `🧩 ${puzzles[0].name} has a strong margin ($${puzzles[0].margin.toFixed(2)} per plate) but few orders. Move it to the top of its section and have servers recommend it.`,
     dogs.length && `🐶 ${dogs.map((d) => d.name).slice(0, 2).join(" and ")} underperform on both popularity and margin. Rework or replace them next menu cycle.`,
   ].filter(Boolean) as string[];
 }

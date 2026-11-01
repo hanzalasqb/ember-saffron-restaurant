@@ -56,7 +56,13 @@ describe("menu engineering & pricing", () => {
 describe("rule-based concierge", () => {
   it("recommends safe dishes and checks availability", () => {
     const reply = concierge("vegan dinner, I'm allergic to sesame", menu, () => []);
-    expect(reply.dishes.every((d) => d.tags.includes("vegan") && !d.allergens.includes("sesame"))).toBe(true);
+    expect(reply.dishes.length).toBeGreaterThan(0);
+    expect(reply.dishes.every((d) => d.tags.includes("vegan") && !d.allergens.includes("sesame") && d.category !== "drinks")).toBe(true);
+    expect(reply.text).toMatch(/No main course matches/); // the only vegan main has sesame, so it widens to starters
+    expect(reply.text).toMatch(/To drink, try our/);
+    const drinks = concierge("something refreshing to drink, no dairy", menu, () => []);
+    expect(drinks.dishes.length).toBeGreaterThan(0);
+    expect(drinks.dishes.every((d) => d.category === "drinks" && !d.allergens.includes("dairy"))).toBe(true);
     const booking = concierge("book a table for 2 tomorrow at 8pm", menu, () => [{ time: "20:00", available: true }, { time: "20:30", available: true }], new Date(2030, 0, 1));
     expect(booking.booking).toMatchObject({ date: "2030-01-02", time: "20:00", party: 2 });
   });

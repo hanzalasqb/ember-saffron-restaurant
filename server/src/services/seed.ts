@@ -26,7 +26,8 @@ export async function seed(db: DB) {
   const pick = () => { const total = items.reduce((n, i) => n + (WEIGHT[i.slug] ?? 1), 0); let r = rand() * total; for (const i of items) { r -= WEIGHT[i.slug] ?? 1; if (r <= 0) return i; } return items[0]; };
   for (let day = 14; day >= 1; day--) {
     for (let k = 0, n = 14 + Math.floor(rand() * 12); k < n; k++) {
-      const lines = Array.from({ length: 1 + Math.floor(rand() * 4) }, pick).map((m) => ({ m, quantity: 1 + (rand() < 0.2 ? 1 : 0), price: m.price }));
+      const dishes = [...new Map(Array.from({ length: 1 + Math.floor(rand() * 4) }, pick).map((m) => [m.slug, m])).values()]; // one line per dish
+      const lines = dishes.map((m) => ({ m, quantity: 1 + (rand() < 0.2 ? 1 : 0), price: m.price }));
       const type = (["pickup", "delivery", "dine_in"] as const)[Math.floor(rand() * 3)];
       const created = new Date(); created.setDate(created.getDate() - day); created.setHours(12 + Math.floor(rand() * 10), Math.floor(rand() * 60));
       const [o] = await db.insert(orders).values({ code: randomBytes(3).toString("hex").toUpperCase(), customerName: "Demo Guest", phone: "+1 555 0100", type, address: type === "delivery" ? "Riverside District" : null, status: "completed", ...orderTotals(lines, type), createdAt: created, updatedAt: created }).returning();

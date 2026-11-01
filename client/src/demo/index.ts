@@ -22,7 +22,8 @@ const pick = () => { let r = rand() * menu.reduce((n, m) => n + WEIGHT[m.slug], 
 let nextId = 1;
 const orders: Order[] = [];
 function makeOrder(created: Date, status: OrderStatus, name = "Demo Guest"): Order {
-  const lines = Array.from({ length: 1 + Math.floor(rand() * 4) }, pick).map((m) => ({ name: m.name, unitPrice: m.price, quantity: 1 + (rand() < 0.2 ? 1 : 0), slug: m.slug }));
+  const dishes = [...new Map(Array.from({ length: 1 + Math.floor(rand() * 4) }, pick).map((m) => [m.slug, m])).values()]; // one line per dish
+  const lines = dishes.map((m) => ({ name: m.name, unitPrice: m.price, quantity: 1 + (rand() < 0.2 ? 1 : 0), slug: m.slug }));
   const type = (["pickup", "delivery", "dine_in"] as const)[Math.floor(rand() * 3)];
   return { id: nextId++, code: code(), customerName: name, phone: "+1 555 0100", type, address: type === "delivery" ? "Riverside District" : null, status, ...orderTotals(lines.map((l) => ({ price: l.unitPrice, quantity: l.quantity })), type), createdAt: created.toISOString(), items: lines };
 }

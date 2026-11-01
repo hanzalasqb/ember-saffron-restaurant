@@ -17,7 +17,7 @@ Guests browse an allergen-labelled menu, order for pickup or delivery and track 
 ![SSE](https://img.shields.io/badge/Real--time-SSE-ee9b22)
 ![Vitest](https://img.shields.io/badge/Vitest-14_tests-6E9F18?logo=vitest&logoColor=white)
 
-<img src="docs/screenshots/home.png" alt="Ember & Saffron home page" width="100%" />
+<img src="docs/screenshots/home.jpg" alt="Ember & Saffron home page" width="100%" />
 
 </div>
 
@@ -43,8 +43,10 @@ Guests browse an allergen-labelled menu, order for pickup or delivery and track 
 | <img src="docs/screenshots/menu.png" alt="Menu" /> | <img src="docs/screenshots/reserve.png" alt="Reservations" /> |
 | **Real-time kitchen display** | **AI menu-engineering insights** |
 | <img src="docs/screenshots/kitchen.png" alt="Kitchen display" /> | <img src="docs/screenshots/insights.png" alt="Insights" /> |
-
-<p align="center"><img src="docs/screenshots/concierge.png" alt="AI concierge" width="80%" /></p>
+| **AI concierge: allergy-aware suggestions** | **AI concierge: checks live table availability** |
+| <img src="docs/screenshots/concierge.png" alt="AI concierge recommending dishes" /> | <img src="docs/screenshots/concierge-booking.png" alt="AI concierge offering reservation slots" /> |
+| **Reservation timeline for staff** | **Desserts with dietary labels** |
+| <img src="docs/screenshots/floor.png" alt="Reservation timeline" /> | <img src="docs/screenshots/menu-desserts.png" alt="Dessert menu" /> |
 
 ## 🏗️ Architecture
 

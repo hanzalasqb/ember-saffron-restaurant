@@ -11,6 +11,7 @@ export interface ConciergeReply {
 
 const NUMBERS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8 };
 const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const to12h = (hhmm: string) => { const [h, m] = hhmm.split(":").map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`; };
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 export function parseBooking(text: string, today: Date): { date: string; time?: string; party?: number } {
@@ -54,8 +55,8 @@ export function concierge(message: string, menu: Dish[], availability: (date: st
       text: !slots.length
         ? `Sorry, we're fully booked for ${party} on ${dateLabel}. Would another day work?`
         : exact
-          ? `Good news — a table for **${party}** is available on **${dateLabel} at ${req.time}**. Tap the slot below to confirm your details.`
-          : `For **${party}** on **${dateLabel}**${req.time ? ` around ${req.time}` : ""}, I can offer: **${near.join(", ")}**. Pick a time below to reserve.`,
+          ? `Good news — a table for **${party}** is available on **${dateLabel} at ${to12h(req.time!)}**. Tap the slot below to confirm your details.`
+          : `For **${party}** on **${dateLabel}**${req.time ? ` around ${to12h(req.time)}` : ""}, I can offer: **${near.map(to12h).join(", ")}**. Pick a time below to reserve.`,
     };
   }
 
@@ -69,16 +70,28 @@ export function concierge(message: string, menu: Dish[], availability: (date: st
   }
 
   const diet = parseDiet(message);
-  let dishes = filterMenu(menu, diet);
-  if (!dishes.length && diet.category) dishes = filterMenu(menu, { ...diet, category: undefined });
-  dishes = [...dishes].sort((a, b) => Number(b.popular ?? false) - Number(a.popular ?? false) || b.price - a.price).slice(0, 4);
-  const needs = [...(diet.tags ?? []), ...(diet.excludeAllergens ?? []).map((a) => `no ${a}`), diet.maxPrice ? `under $${diet.maxPrice}` : "", diet.mild ? "mild" : ""].filter(Boolean);
-  const drink = menu.find((d) => d.category === "drinks" && (diet.tags ?? []).every((tag) => d.tags.includes(tag) || tag === "spicy"));
+  const wantsDrinks = diet.category === "drinks";
+  const rank = (list: Dish[]) => [...list].sort((a, b) => Number(b.popular ?? false) - Number(a.popular ?? false) || b.price - a.price);
+  // Food first: drinks are only recommended when asked for, otherwise offered as a pairing.
+  let dishes = filterMenu(menu, diet).filter((d) => wantsDrinks || d.category !== "drinks");
+  let broadened = false;
+  if (!dishes.length && diet.category && !wantsDrinks) {
+    dishes = filterMenu(menu, { ...diet, category: undefined }).filter((d) => d.category !== "drinks");
+    broadened = dishes.length > 0;
+  }
+  dishes = rank(dishes).slice(0, 4);
+  const needs = [...(diet.tags ?? []), ...(diet.excludeAllergens ?? []).filter((a) => !(a === "gluten" && diet.tags?.includes("gluten-free"))).map((a) => `no ${a}`), diet.maxPrice ? `under $${diet.maxPrice}` : "", diet.mild ? "mild" : ""].filter(Boolean);
+  const drink = wantsDrinks ? undefined : rank(filterMenu(menu, { category: "drinks", tags: (diet.tags ?? []).filter((t) => t !== "spicy"), excludeAllergens: diet.excludeAllergens })).find((d) => !dishes.some((x) => x.slug === d.slug));
+  const course = { starters: "starter", mains: "main course", desserts: "dessert", drinks: "drink" }[diet.category ?? "mains"];
+  const intro = broadened
+    ? `No ${course} matches${needs.length ? ` (${needs.join(", ")})` : ""} today, but ${dishes.length === 1 ? "this dish does" : "these dishes do"}:`
+    : `Here ${dishes.length === 1 ? "is a dish" : "are dishes"} I'd recommend${needs.length ? ` (${needs.join(", ")})` : ""}:`;
+  const pairing = drink ? `\n\nTo drink, try our **${drink.name}** ($${drink.price}).` : "";
   return {
     tool: { name: "search_menu", args: { ...diet }, summary: `${dishes.length} dishes` },
     dishes,
     text: dishes.length
-      ? `Here ${dishes.length === 1 ? "is a dish" : "are dishes"} I'd recommend${needs.length ? ` (${needs.join(", ")})` : ""}:\n\n${dishes.map(fmt).join("\n")}${drink && diet.category !== "drinks" ? `\n\nPair it with our **${drink.name}** ($${drink.price}).` : ""}\n\nAllergen info comes from our recipes, but please tell your server about severe allergies.`
-      : "I couldn't find a dish matching all of those requirements. Our team can often adapt dishes — please mention it when you order.",
+      ? `${intro}\n\n${dishes.map(fmt).join("\n")}${pairing}\n\nAllergen info comes from our recipes, but please tell your server about severe allergies.`
+      : `I couldn't find a dish matching all of those requirements${drink ? `, though our **${drink.name}** ($${drink.price}) fits` : ""}. Our team can often adapt dishes, so please mention it when you order.`,
   };
 }
