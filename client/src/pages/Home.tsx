@@ -55,7 +55,7 @@ export default function Home() {
 
       <section className="border-y border-white/[0.06] bg-coal">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-20 lg:grid-cols-2">
-          <Photo src="images/ambience/chef.jpg" alt="Our kitchen" className="h-[460px] w-full rounded-3xl" />
+          <Photo src="images/ambience/grill.jpg" alt="Food cooking over glowing charcoal" className="h-[460px] w-full rounded-3xl" />
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-saffron-400">Our story</p>
             <h2 className="mt-2 font-serif text-4xl font-semibold">Where the grill meets the spice route</h2>

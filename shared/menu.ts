@@ -45,7 +45,7 @@ export const MENU: MenuItemDef[] = [
   i("citrus-spritz", "Blood Orange Spritz", "drinks", 7, 1.2, "Blood orange, rosemary syrup and tonic — alcohol-free.", ["vegan", "vegetarian", "gluten-free", "halal"], [], 140, 0, "photo-1556804335-2fa563e93aae"),
   i("iced-spanish-latte", "Iced Spanish Latte", "drinks", 6, 1.1, "Double espresso, condensed milk and cold milk over ice.", ["vegetarian", "gluten-free", "halal"], ["dairy"], 210, 0, "photo-1461023058943-07fcbe16d735"),
 ];
-export const AMBIENCE_PHOTOS = { hero: "photo-1517248135467-4c7edcad34c4", chef: "photo-1577219491135-ce391730fb2c" };
+export const AMBIENCE_PHOTOS = { hero: "photo-1517248135467-4c7edcad34c4", grill: "photo-1765036741158-5a1698974257" };
 export const TABLES = [
   { id: 1, label: "T1", capacity: 2, zone: "Window" }, { id: 2, label: "T2", capacity: 2, zone: "Window" }, { id: 3, label: "T3", capacity: 2, zone: "Bar" },
   { id: 4, label: "T4", capacity: 4, zone: "Main hall" }, { id: 5, label: "T5", capacity: 4, zone: "Main hall" }, { id: 6, label: "T6", capacity: 4, zone: "Terrace" },
