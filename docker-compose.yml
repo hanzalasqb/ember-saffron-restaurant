@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ember
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ember-local}
+      POSTGRES_DB: ember
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ember"]
+      interval: 5s
+      retries: 10
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    env_file: ./server/.env
+    environment:
+      DATABASE_URL: postgres://ember:${POSTGRES_PASSWORD:-ember-local}@db:5432/ember
+      NODE_ENV: production
+      TZ: ${RESTAURANT_TZ:-Asia/Karachi}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4100:4100"
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    depends_on: [server]
+    ports:
+      - "3000:80"
+volumes:
+  pgdata:

@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --color-night: #0f0d0b;
+  --color-coal: #1a1613;
+  --color-ash: #2a241f;
+  --color-cream: #f6efe4;
+  --color-saffron-300: #fcd38a;
+  --color-saffron-400: #f7b955;
+  --color-saffron-500: #ee9b22;
+  --color-ember-500: #e2512b;
+}
+
+html, body, #root { min-height: 100%; }
+body { @apply bg-night text-cream antialiased; }
+
+@utility card { @apply rounded-2xl border border-white/[0.07] bg-coal; }
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50; }
+@utility btn-primary { @apply btn bg-saffron-400 text-night hover:bg-saffron-300; }
+@utility btn-outline { @apply btn border border-cream/30 text-cream hover:bg-white/5; }
+@utility input { @apply w-full rounded-xl border border-white/10 bg-night/60 px-3.5 py-2.5 text-sm text-cream outline-none placeholder:text-cream/40 focus:border-saffron-400 focus:ring-4 focus:ring-saffron-400/15; }
+@utility chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium; }
+
+.prose-chat { @apply text-sm leading-relaxed text-cream/85; }
+.prose-chat p { @apply my-1.5; }
+.prose-chat ul { @apply my-1.5 list-disc pl-5; }
+.prose-chat strong { @apply text-saffron-300; }
