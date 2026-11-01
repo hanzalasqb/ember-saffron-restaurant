@@ -1,0 +1,22 @@
+{
+ "client/public/images/menu/burrata-caprese.jpg": "https://images.unsplash.com/photo-1769458313937-b5ad8f84942e?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/crispy-calamari.jpg": "https://images.unsplash.com/photo-1778600731531-7d836a32704c?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/lamb-samosas.jpg": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/wild-mushroom-soup.jpg": "https://images.unsplash.com/photo-1619860859762-0569749bc607?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/saffron-chicken-biryani.jpg": "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/wood-fired-margherita.jpg": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/ember-ribeye.jpg": "https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/charred-salmon.jpg": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/truffle-risotto.jpg": "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/smash-burger.jpg": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/chicken-tikka-masala.jpg": "https://images.unsplash.com/photo-1772730064970-a7b2735c93b9?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/falafel-mezze.jpg": "https://images.unsplash.com/photo-1680990999782-ba7fe26e4d0b?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/molten-chocolate-cake.jpg": "https://images.unsplash.com/photo-1617305855058-336d24456869?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/classic-tiramisu.jpg": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/strawberry-panna-cotta.jpg": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/mint-lime-cooler.jpg": "https://images.unsplash.com/photo-1653542772393-71ffa417b1c4?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/citrus-spritz.jpg": "https://images.unsplash.com/photo-1556804335-2fa563e93aae?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/menu/iced-spanish-latte.jpg": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fm=jpg&fit=crop&w=900&h=700&q=75",
+ "client/public/images/ambience/hero.jpg": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fm=jpg&fit=crop&w=1920&h=1080&q=70",
+ "client/public/images/ambience/chef.jpg": "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fm=jpg&fit=crop&w=1000&h=1100&q=75"
+}
